@@ -151,13 +151,16 @@ mod tests {
     #[test]
     fn scroll_up_moves_content_and_blanks_last_row() {
         let mut g = TermGrid::new(2, 3);
+        // Fill row 0: A B C
         g.write_char('A');
         g.write_char('B');
         g.write_char('C');
-        // Row 0: A B C, Row 1: blank
+        // Write X on row 1 (cursor wrapped there after row 0 was full)
+        g.write_char('X');
+        // Row 0: A B C, Row 1: X blank blank
         g.scroll_up();
-        // Row 0 should now be row 1's blanks, row 1 should be blank
-        assert_eq!(g.cell_at(0, 0).unwrap().ch, ' ');
+        // After scroll: row 0 = old row 1 (X blank blank), row 1 = blank
+        assert_eq!(g.cell_at(0, 0).unwrap().ch, 'X');
         assert_eq!(g.cell_at(1, 0).unwrap().ch, ' ');
     }
 

@@ -81,6 +81,8 @@ impl AirTermApp {
             self.tabs.remove(idx);
             if self.active_tab >= self.tabs.len() {
                 self.active_tab = self.tabs.len() - 1;
+            } else if idx < self.active_tab {
+                self.active_tab -= 1;
             }
         }
     }
@@ -191,5 +193,17 @@ mod tests {
     fn menu_items_contains_new_tab() {
         let items = AirTermApp::menu_items();
         assert!(items.iter().any(|i| i.id == "new_tab"));
+    }
+
+    #[test]
+    fn close_non_active_tab_before_active_keeps_active_correct() {
+        let mut app = make_app();
+        let first_id = app.active_tab_id(); // id=1, index=0
+        app.add_tab(); // id=2, index=1
+        let third_id = app.add_tab(); // id=3, index=2, now active
+        // active is third tab (index 2)
+        app.close_tab(first_id); // remove tab at index 0, shifts others left
+        // third tab should still be active
+        assert_eq!(app.active_tab_id(), third_id);
     }
 }
