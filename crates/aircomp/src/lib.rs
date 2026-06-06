@@ -1,6 +1,9 @@
 pub mod ipc_server;
+pub mod rect_pipeline;
 pub mod renderer;
 pub mod scene;
+pub mod shell_chrome;
+pub mod surface;
 pub mod window;
 
 use std::sync::{Arc, Mutex};
@@ -8,27 +11,26 @@ use std::sync::{Arc, Mutex};
 pub use scene::WindowScene;
 pub use window::WindowState;
 
-pub async fn run() {
+pub fn run() {
+    let rt = tokio::runtime::Builder::new_multi_thread()
+        .enable_all()
+        .build()
+        .unwrap();
+
     let scene = Arc::new(Mutex::new(WindowScene::new()));
     let socket_path = std::path::PathBuf::from("/tmp/aircomp.sock");
-
     let _ = std::fs::remove_file(&socket_path);
 
     let ipc_scene = scene.clone();
-    let ipc_path = socket_path.clone();
-    let ipc_task = tokio::spawn(async move {
-        ipc_server::run_server(ipc_scene, &ipc_path)
+    rt.spawn(async move {
+        ipc_server::run_server(ipc_scene, &socket_path)
             .await
             .expect("IPC server failed");
     });
 
-    let render_scene = scene.clone();
-    let render_task = tokio::spawn(async move {
-        renderer::run_headless(render_scene).await;
-    });
+    surface::run_event_loop(scene);
+}
 
-    tokio::select! {
-        _ = ipc_task => {},
-        _ = render_task => {},
-    }
+pub async fn run_headless(scene: Arc<Mutex<WindowScene>>) {
+    renderer::run_headless(scene).await;
 }
