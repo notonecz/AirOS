@@ -11,6 +11,9 @@ for f in airos.img vmlinuz-lts initramfs-lts; do
     fi
 done
 
+# Ověřit dostupnost QEMU
+command -v qemu-system-x86_64 >/dev/null 2>&1 || { echo "ERROR: qemu-system-x86_64 není nainstalován. Spusť: brew install qemu"; exit 1; }
+
 echo "==> Spouštím AirOS v QEMU..."
 qemu-system-x86_64 \
     -kernel "$ROOT_DIR/vmlinuz-lts" \

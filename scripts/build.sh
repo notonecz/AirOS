@@ -32,6 +32,7 @@ docker run --privileged --rm \
     -v "$ROOT_DIR/airos-rootfs.tar":/rootfs.tar:ro \
     -v "$ROOT_DIR":/output \
     alpine:3.21 sh -c '
+        set -e
         apk add --no-cache e2fsprogs util-linux >/dev/null 2>&1
         dd if=/dev/zero of=/output/airos.img bs=1M count=512 2>/dev/null
         mkfs.ext4 -q /output/airos.img
