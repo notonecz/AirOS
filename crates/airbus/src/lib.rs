@@ -1,5 +1,5 @@
-pub mod messages;
 pub mod connection;
+pub mod messages;
 
-pub use messages::{BusMessage, NotificationPayload, MenuItem};
 pub use connection::AirBusConn;
+pub use messages::{BusMessage, MenuItem, NotificationPayload};

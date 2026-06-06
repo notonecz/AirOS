@@ -1,6 +1,6 @@
 // crates/airproto/src/types.rs
+use bincode::{Decode, Encode};
 use serde::{Deserialize, Serialize};
-use bincode::{Encode, Decode};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize, Encode, Decode)]
 pub struct WindowId(pub u64);
@@ -29,7 +29,10 @@ mod tests {
 
     #[test]
     fn size_fields() {
-        let s = Size { width: 800, height: 600 };
+        let s = Size {
+            width: 800,
+            height: 600,
+        };
         assert_eq!(s.width, 800);
         assert_eq!(s.height, 600);
     }

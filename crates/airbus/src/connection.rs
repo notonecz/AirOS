@@ -1,7 +1,7 @@
+use crate::messages::BusMessage;
 use std::path::Path;
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
 use tokio::net::UnixStream;
-use crate::messages::BusMessage;
 
 pub struct AirBusConn {
     stream: UnixStream,
@@ -56,7 +56,9 @@ mod tests {
                 title: "Hello".to_string(),
                 body: "World".to_string(),
                 icon: None,
-            })).await.unwrap();
+            }))
+            .await
+            .unwrap();
         });
         let (stream, _) = listener.accept().await.unwrap();
         let mut server_conn = AirBusConn::from_stream(stream);
@@ -73,7 +75,9 @@ mod tests {
         let path = socket_path.clone();
         let client_task = tokio::spawn(async move {
             let mut conn = AirBusConn::connect(&path).await.unwrap();
-            conn.send(&BusMessage::SetDockBadge { count: 3 }).await.unwrap();
+            conn.send(&BusMessage::SetDockBadge { count: 3 })
+                .await
+                .unwrap();
         });
         let (stream, _) = listener.accept().await.unwrap();
         let mut server_conn = AirBusConn::from_stream(stream);

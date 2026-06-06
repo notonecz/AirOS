@@ -1,6 +1,6 @@
+use crate::types::{Point, Size, WindowId};
+use bincode::{Decode, Encode};
 use serde::{Deserialize, Serialize};
-use bincode::{Encode, Decode};
-use crate::types::{WindowId, Size, Point};
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Encode, Decode)]
 pub enum ClientMessage {
@@ -12,11 +12,26 @@ pub enum ClientMessage {
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Encode, Decode)]
 pub enum ServerMessage {
-    KeyEvent { window_id: WindowId, scancode: u32, pressed: bool },
-    PointerMove { window_id: WindowId, position: Point },
-    PointerButton { window_id: WindowId, button: u32, pressed: bool },
-    WindowFocus { window_id: WindowId },
-    WindowClose { window_id: WindowId },
+    KeyEvent {
+        window_id: WindowId,
+        scancode: u32,
+        pressed: bool,
+    },
+    PointerMove {
+        window_id: WindowId,
+        position: Point,
+    },
+    PointerButton {
+        window_id: WindowId,
+        button: u32,
+        pressed: bool,
+    },
+    WindowFocus {
+        window_id: WindowId,
+    },
+    WindowClose {
+        window_id: WindowId,
+    },
 }
 
 #[cfg(test)]
@@ -27,7 +42,10 @@ mod tests {
     fn client_message_roundtrip_bincode() {
         let msg = ClientMessage::WindowCreate {
             id: WindowId(42),
-            size: Size { width: 1280, height: 720 },
+            size: Size {
+                width: 1280,
+                height: 720,
+            },
         };
         let encoded = bincode::encode_to_vec(&msg, bincode::config::standard()).unwrap();
         let (decoded, _): (ClientMessage, _) =

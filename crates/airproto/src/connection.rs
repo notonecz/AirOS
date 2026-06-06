@@ -1,7 +1,7 @@
+use bincode::{Decode, Encode};
 use std::path::Path;
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
 use tokio::net::UnixStream;
-use bincode::{Encode, Decode};
 
 pub struct AirProtoConn {
     stream: UnixStream,
@@ -44,7 +44,7 @@ impl AirProtoConn {
 mod tests {
     use super::*;
     use crate::messages::{ClientMessage, ServerMessage};
-    use crate::types::{WindowId, Size};
+    use crate::types::{Size, WindowId};
     use tempfile::TempDir;
     use tokio::net::UnixListener;
 
@@ -58,7 +58,10 @@ mod tests {
             let mut conn = AirProtoConn::connect(&path).await.unwrap();
             let msg = ClientMessage::WindowCreate {
                 id: WindowId(1),
-                size: Size { width: 800, height: 600 },
+                size: Size {
+                    width: 800,
+                    height: 600,
+                },
             };
             conn.send(&msg).await.unwrap();
         });
@@ -70,7 +73,10 @@ mod tests {
             received,
             ClientMessage::WindowCreate {
                 id: WindowId(1),
-                size: Size { width: 800, height: 600 },
+                size: Size {
+                    width: 800,
+                    height: 600
+                },
             }
         );
     }
@@ -83,13 +89,20 @@ mod tests {
         let server_task = tokio::spawn(async move {
             let (stream, _) = listener.accept().await.unwrap();
             let mut conn = AirProtoConn::from_stream(stream);
-            let msg = ServerMessage::WindowClose { window_id: WindowId(99) };
+            let msg = ServerMessage::WindowClose {
+                window_id: WindowId(99),
+            };
             conn.send(&msg).await.unwrap();
         });
         let mut client_conn = AirProtoConn::connect(&socket_path).await.unwrap();
         let received: ServerMessage = client_conn.recv().await.unwrap();
         server_task.await.unwrap();
-        assert_eq!(received, ServerMessage::WindowClose { window_id: WindowId(99) });
+        assert_eq!(
+            received,
+            ServerMessage::WindowClose {
+                window_id: WindowId(99)
+            }
+        );
     }
 
     #[tokio::test]
@@ -102,9 +115,16 @@ mod tests {
             let mut conn = AirProtoConn::connect(&path).await.unwrap();
             conn.send(&ClientMessage::WindowCreate {
                 id: WindowId(1),
-                size: Size { width: 100, height: 100 },
-            }).await.unwrap();
-            conn.send(&ClientMessage::WindowDestroy { id: WindowId(1) }).await.unwrap();
+                size: Size {
+                    width: 100,
+                    height: 100,
+                },
+            })
+            .await
+            .unwrap();
+            conn.send(&ClientMessage::WindowDestroy { id: WindowId(1) })
+                .await
+                .unwrap();
         });
         let (stream, _) = listener.accept().await.unwrap();
         let mut server_conn = AirProtoConn::from_stream(stream);
