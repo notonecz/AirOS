@@ -81,7 +81,7 @@ impl PanelState {
         self.selected = None;
     }
 
-    fn sort_entries(entries: &mut Vec<FsEntry>, order: SortOrder) {
+    fn sort_entries(entries: &mut [FsEntry], order: SortOrder) {
         match order {
             SortOrder::NameAsc => entries.sort_by(|a, b| a.name.cmp(&b.name)),
             SortOrder::NameDesc => entries.sort_by(|a, b| b.name.cmp(&a.name)),
