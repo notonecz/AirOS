@@ -1,0 +1,8 @@
+[package]
+name = "airsettings"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+airbus = { path = "../../crates/airbus" }
+airkit-theme = { path = "../../crates/airkit-theme" }
