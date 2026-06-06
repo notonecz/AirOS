@@ -14,6 +14,7 @@ pub struct SidebarItem {
     pub section: SidebarSection,
 }
 
+#[derive(Debug)]
 pub struct SidebarState {
     items: Vec<SidebarItem>,
     active: Option<usize>,
