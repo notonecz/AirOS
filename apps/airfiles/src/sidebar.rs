@@ -22,7 +22,10 @@ pub struct SidebarState {
 
 impl SidebarState {
     pub fn new() -> Self {
-        Self { items: Vec::new(), active: None }
+        Self {
+            items: Vec::new(),
+            active: None,
+        }
     }
 
     /// Přidá položku do sekce Oblíbené.
@@ -221,7 +224,7 @@ mod tests {
         s.add_favorite(PathBuf::from("/Users/vo/Downloads"), "Downloads".into());
         s.set_active(1); // Downloads is active
         s.remove_favorite(Path::new("/Users/vo")); // remove Home, not the active item
-        // Active should still be valid (now index 0 = Downloads)
+                                                   // Active should still be valid (now index 0 = Downloads)
         assert!(s.active_index().is_some());
     }
 }

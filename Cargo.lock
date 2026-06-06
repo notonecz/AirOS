@@ -23,6 +23,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "airfiles"
+version = "0.1.0"
+dependencies = [
+ "airbus",
+]
+
+[[package]]
 name = "airkit-theme"
 version = "0.1.0"
 
@@ -41,6 +48,27 @@ dependencies = [
  "serde",
  "tempfile",
  "tokio",
+]
+
+[[package]]
+name = "airshell"
+version = "0.1.0"
+dependencies = [
+ "airbus",
+]
+
+[[package]]
+name = "airterm"
+version = "0.1.0"
+dependencies = [
+ "airbus",
+]
+
+[[package]]
+name = "airwm"
+version = "0.1.0"
+dependencies = [
+ "airproto",
 ]
 
 [[package]]

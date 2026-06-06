@@ -30,8 +30,12 @@ impl NotificationQueue {
     pub fn push(&mut self, title: String, body: String, icon: Option<String>) -> u64 {
         let id = self.next_id;
         self.next_id += 1;
-        self.entries
-            .push_back(NotificationEntry { id, title, body, icon });
+        self.entries.push_back(NotificationEntry {
+            id,
+            title,
+            body,
+            icon,
+        });
         if self.entries.len() > self.max_size {
             self.entries.pop_front();
         }

@@ -16,11 +16,19 @@ pub struct CellStyle {
 
 impl CellStyle {
     pub const fn plain() -> Self {
-        Self { bold: false, italic: false, underline: false }
+        Self {
+            bold: false,
+            italic: false,
+            underline: false,
+        }
     }
 
     pub const fn bold() -> Self {
-        Self { bold: true, italic: false, underline: false }
+        Self {
+            bold: true,
+            italic: false,
+            underline: false,
+        }
     }
 }
 

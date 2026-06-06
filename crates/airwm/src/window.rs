@@ -1,7 +1,7 @@
 // crates/airwm/src/window.rs
 
-use airproto::types::{Point, Size, WindowId};
 use crate::snap::{snap_rect, SnapZone};
+use airproto::types::{Point, Size, WindowId};
 
 /// Stav okna.
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -87,12 +87,18 @@ mod tests {
             WindowId(1),
             "Test",
             Point { x: 100.0, y: 100.0 },
-            Size { width: 800, height: 600 },
+            Size {
+                width: 800,
+                height: 600,
+            },
         )
     }
 
     fn screen() -> Size {
-        Size { width: 1920, height: 1080 }
+        Size {
+            width: 1920,
+            height: 1080,
+        }
     }
 
     #[test]

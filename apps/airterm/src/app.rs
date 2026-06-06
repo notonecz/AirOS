@@ -66,7 +66,8 @@ impl AirTermApp {
     pub fn add_tab(&mut self) -> u32 {
         let id = self.next_tab_id;
         self.next_tab_id += 1;
-        self.tabs.push(Tab::new(id, self.default_rows, self.default_cols));
+        self.tabs
+            .push(Tab::new(id, self.default_rows, self.default_cols));
         self.active_tab = self.tabs.len() - 1;
         id
     }
@@ -102,11 +103,31 @@ impl AirTermApp {
     /// Vrátí menu položky pro registraci přes AirBus.
     pub fn menu_items() -> Vec<MenuItem> {
         vec![
-            MenuItem { id: "new_tab".into(), label: "New Tab".into(), enabled: true },
-            MenuItem { id: "close_tab".into(), label: "Close Tab".into(), enabled: true },
-            MenuItem { id: "split_horizontal".into(), label: "Split Horizontal".into(), enabled: true },
-            MenuItem { id: "split_vertical".into(), label: "Split Vertical".into(), enabled: true },
-            MenuItem { id: "clear".into(), label: "Clear".into(), enabled: true },
+            MenuItem {
+                id: "new_tab".into(),
+                label: "New Tab".into(),
+                enabled: true,
+            },
+            MenuItem {
+                id: "close_tab".into(),
+                label: "Close Tab".into(),
+                enabled: true,
+            },
+            MenuItem {
+                id: "split_horizontal".into(),
+                label: "Split Horizontal".into(),
+                enabled: true,
+            },
+            MenuItem {
+                id: "split_vertical".into(),
+                label: "Split Vertical".into(),
+                enabled: true,
+            },
+            MenuItem {
+                id: "clear".into(),
+                label: "Clear".into(),
+                enabled: true,
+            },
         ]
     }
 }
@@ -201,9 +222,9 @@ mod tests {
         let first_id = app.active_tab_id(); // id=1, index=0
         app.add_tab(); // id=2, index=1
         let third_id = app.add_tab(); // id=3, index=2, now active
-        // active is third tab (index 2)
+                                      // active is third tab (index 2)
         app.close_tab(first_id); // remove tab at index 0, shifts others left
-        // third tab should still be active
+                                 // third tab should still be active
         assert_eq!(app.active_tab_id(), third_id);
     }
 }

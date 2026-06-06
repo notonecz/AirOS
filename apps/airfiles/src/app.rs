@@ -72,10 +72,26 @@ impl AirFilesApp {
     /// Vrátí menu položky pro registraci přes AirBus.
     pub fn menu_items() -> Vec<MenuItem> {
         vec![
-            MenuItem { id: "new_folder".into(), label: "New Folder".into(), enabled: true },
-            MenuItem { id: "copy".into(), label: "Copy".into(), enabled: true },
-            MenuItem { id: "paste".into(), label: "Paste".into(), enabled: true },
-            MenuItem { id: "delete".into(), label: "Delete".into(), enabled: true },
+            MenuItem {
+                id: "new_folder".into(),
+                label: "New Folder".into(),
+                enabled: true,
+            },
+            MenuItem {
+                id: "copy".into(),
+                label: "Copy".into(),
+                enabled: true,
+            },
+            MenuItem {
+                id: "paste".into(),
+                label: "Paste".into(),
+                enabled: true,
+            },
+            MenuItem {
+                id: "delete".into(),
+                label: "Delete".into(),
+                enabled: true,
+            },
         ]
     }
 }
@@ -94,7 +110,12 @@ mod tests {
     }
 
     fn file(name: &str) -> FsEntry {
-        FsEntry::new(name, PathBuf::from(name), FileKind::File, EntryMeta::file(1))
+        FsEntry::new(
+            name,
+            PathBuf::from(name),
+            FileKind::File,
+            EntryMeta::file(1),
+        )
     }
 
     #[test]
@@ -142,7 +163,8 @@ mod tests {
     #[test]
     fn active_panel_mut_modifies_left_by_default() {
         let mut app = make_app();
-        app.active_panel_mut().load_entries(vec![file("readme.txt")]);
+        app.active_panel_mut()
+            .load_entries(vec![file("readme.txt")]);
         assert_eq!(app.left.entries().len(), 1);
         assert!(app.right.entries().is_empty());
     }
@@ -151,7 +173,8 @@ mod tests {
     fn active_panel_mut_modifies_right_after_switch() {
         let mut app = make_app();
         app.switch_panel();
-        app.active_panel_mut().load_entries(vec![file("readme.txt")]);
+        app.active_panel_mut()
+            .load_entries(vec![file("readme.txt")]);
         assert!(app.left.entries().is_empty());
         assert_eq!(app.right.entries().len(), 1);
     }

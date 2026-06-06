@@ -1,9 +1,9 @@
 // crates/airwm/src/manager.rs
 
-use std::collections::HashMap;
-use airproto::types::{Point, Size, WindowId};
 use crate::snap::SnapZone;
 use crate::window::ManagedWindow;
+use airproto::types::{Point, Size, WindowId};
+use std::collections::HashMap;
 
 pub struct WindowManager {
     windows: HashMap<WindowId, ManagedWindow>,
@@ -104,7 +104,10 @@ mod tests {
     use super::*;
 
     fn screen() -> Size {
-        Size { width: 1920, height: 1080 }
+        Size {
+            width: 1920,
+            height: 1080,
+        }
     }
 
     fn pos(x: f32, y: f32) -> Point {
@@ -112,7 +115,10 @@ mod tests {
     }
 
     fn sz(w: u32, h: u32) -> Size {
-        Size { width: w, height: h }
+        Size {
+            width: w,
+            height: h,
+        }
     }
 
     #[test]

@@ -6,7 +6,7 @@ use crate::cell::Cell;
 pub struct TermGrid {
     rows: usize,
     cols: usize,
-    cells: Vec<Cell>,       // row-major: cells[row * cols + col]
+    cells: Vec<Cell>, // row-major: cells[row * cols + col]
     pub cursor_row: usize,
     pub cursor_col: usize,
 }

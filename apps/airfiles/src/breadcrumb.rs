@@ -25,7 +25,9 @@ impl BreadcrumbPath {
     /// Pokud je index >= počet segmentů, vrátí kopii celé cesty.
     pub fn navigate_to_index(&self, index: usize) -> Self {
         let end = (index + 1).min(self.segments.len());
-        Self { segments: self.segments[..end].to_vec() }
+        Self {
+            segments: self.segments[..end].to_vec(),
+        }
     }
 
     /// Přidá segment (název adresáře) na konec.

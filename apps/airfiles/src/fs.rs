@@ -17,11 +17,17 @@ pub struct EntryMeta {
 
 impl EntryMeta {
     pub fn file(size: u64) -> Self {
-        Self { size_bytes: Some(size), modified_secs: None }
+        Self {
+            size_bytes: Some(size),
+            modified_secs: None,
+        }
     }
 
     pub fn dir() -> Self {
-        Self { size_bytes: None, modified_secs: None }
+        Self {
+            size_bytes: None,
+            modified_secs: None,
+        }
     }
 }
 
@@ -35,7 +41,12 @@ pub struct FsEntry {
 
 impl FsEntry {
     pub fn new(name: impl Into<String>, path: PathBuf, kind: FileKind, meta: EntryMeta) -> Self {
-        Self { name: name.into(), path, kind, meta }
+        Self {
+            name: name.into(),
+            path,
+            kind,
+            meta,
+        }
     }
 
     pub fn is_dir(&self) -> bool {
@@ -52,11 +63,21 @@ mod tests {
     use super::*;
 
     fn file(name: &str, size: u64) -> FsEntry {
-        FsEntry::new(name, PathBuf::from(name), FileKind::File, EntryMeta::file(size))
+        FsEntry::new(
+            name,
+            PathBuf::from(name),
+            FileKind::File,
+            EntryMeta::file(size),
+        )
     }
 
     fn dir(name: &str) -> FsEntry {
-        FsEntry::new(name, PathBuf::from(name), FileKind::Directory, EntryMeta::dir())
+        FsEntry::new(
+            name,
+            PathBuf::from(name),
+            FileKind::Directory,
+            EntryMeta::dir(),
+        )
     }
 
     #[test]

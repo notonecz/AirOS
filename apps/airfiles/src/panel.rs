@@ -87,10 +87,16 @@ impl PanelState {
             SortOrder::NameAsc => entries.sort_by(|a, b| a.name.cmp(&b.name)),
             SortOrder::NameDesc => entries.sort_by(|a, b| b.name.cmp(&a.name)),
             SortOrder::SizeAsc => entries.sort_by(|a, b| {
-                a.meta.size_bytes.unwrap_or(0).cmp(&b.meta.size_bytes.unwrap_or(0))
+                a.meta
+                    .size_bytes
+                    .unwrap_or(0)
+                    .cmp(&b.meta.size_bytes.unwrap_or(0))
             }),
             SortOrder::SizeDesc => entries.sort_by(|a, b| {
-                b.meta.size_bytes.unwrap_or(0).cmp(&a.meta.size_bytes.unwrap_or(0))
+                b.meta
+                    .size_bytes
+                    .unwrap_or(0)
+                    .cmp(&a.meta.size_bytes.unwrap_or(0))
             }),
         }
     }
@@ -103,7 +109,12 @@ mod tests {
     use std::path::{Path, PathBuf};
 
     fn file(name: &str, size: u64) -> FsEntry {
-        FsEntry::new(name, PathBuf::from(name), FileKind::File, EntryMeta::file(size))
+        FsEntry::new(
+            name,
+            PathBuf::from(name),
+            FileKind::File,
+            EntryMeta::file(size),
+        )
     }
 
     fn make_panel() -> PanelState {

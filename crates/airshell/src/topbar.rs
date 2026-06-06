@@ -1,8 +1,8 @@
 // crates/airshell/src/topbar.rs
 
-use airbus::messages::MenuItem;
 use crate::dock::DockState;
 use crate::notifications::NotificationQueue;
+use airbus::messages::MenuItem;
 use std::collections::HashMap;
 
 /// Stav top baru: registrovaná menu aplikací, aktivní aplikace.
@@ -70,8 +70,16 @@ mod tests {
 
     fn make_menu() -> Vec<MenuItem> {
         vec![
-            MenuItem { id: "new".into(), label: "New".into(), enabled: true },
-            MenuItem { id: "quit".into(), label: "Quit".into(), enabled: true },
+            MenuItem {
+                id: "new".into(),
+                label: "New".into(),
+                enabled: true,
+            },
+            MenuItem {
+                id: "quit".into(),
+                label: "Quit".into(),
+                enabled: true,
+            },
         ]
     }
 

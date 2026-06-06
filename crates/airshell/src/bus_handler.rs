@@ -1,7 +1,7 @@
 // crates/airshell/src/bus_handler.rs
 
-use airbus::messages::{BusMessage, NotificationPayload};
 use crate::topbar::ShellState;
+use airbus::messages::{BusMessage, NotificationPayload};
 
 /// Zpracuje příchozí BusMessage od aplikace a aktualizuje ShellState.
 /// `app_id` identifikuje odesílatele (název/ID aplikace).
