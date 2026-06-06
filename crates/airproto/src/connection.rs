@@ -21,8 +21,9 @@ impl AirProtoConn {
     pub async fn send<T: Encode>(&mut self, msg: &T) -> std::io::Result<()> {
         let payload = bincode::encode_to_vec(msg, bincode::config::standard())
             .map_err(|e| std::io::Error::new(std::io::ErrorKind::InvalidData, e.to_string()))?;
-        let len = u32::try_from(payload.len())
-            .map_err(|_| std::io::Error::new(std::io::ErrorKind::InvalidData, "payload too large"))?;
+        let len = u32::try_from(payload.len()).map_err(|_| {
+            std::io::Error::new(std::io::ErrorKind::InvalidData, "payload too large")
+        })?;
         self.stream.write_all(&len.to_le_bytes()).await?;
         self.stream.write_all(&payload).await?;
         Ok(())

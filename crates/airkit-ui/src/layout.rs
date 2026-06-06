@@ -31,7 +31,11 @@ impl LayoutNode {
     }
 
     pub fn with_size(width: UiSize, height: UiSize) -> Self {
-        Self { width, height, ..Self::new() }
+        Self {
+            width,
+            height,
+            ..Self::new()
+        }
     }
 
     pub fn with_padding(mut self, padding: Padding) -> Self {
@@ -96,46 +100,72 @@ impl LayoutNode {
 
         match self.direction {
             Direction::Column => {
-                let fixed_height: f32 = self.children.iter().map(|c| match c.height {
-                    UiSize::Fixed(v) => v,
-                    UiSize::Fill => 0.0,
-                }).sum();
-                let fill_count = self.children.iter().filter(|c| c.height == UiSize::Fill).count() as f32;
+                let fixed_height: f32 = self
+                    .children
+                    .iter()
+                    .map(|c| match c.height {
+                        UiSize::Fixed(v) => v,
+                        UiSize::Fill => 0.0,
+                    })
+                    .sum();
+                let fill_count = self
+                    .children
+                    .iter()
+                    .filter(|c| c.height == UiSize::Fill)
+                    .count() as f32;
                 let fill_height = if fill_count > 0.0 {
                     ((inner.height - fixed_height - total_gap) / fill_count).max(0.0)
-                } else { 0.0 };
+                } else {
+                    0.0
+                };
 
                 let mut y = inner.y;
-                self.children.iter().map(|c| {
-                    let h = match c.height {
-                        UiSize::Fixed(v) => v,
-                        UiSize::Fill => fill_height,
-                    };
-                    let r = Rect::new(inner.x, y, inner.width, h);
-                    y += h + self.gap;
-                    r
-                }).collect()
+                self.children
+                    .iter()
+                    .map(|c| {
+                        let h = match c.height {
+                            UiSize::Fixed(v) => v,
+                            UiSize::Fill => fill_height,
+                        };
+                        let r = Rect::new(inner.x, y, inner.width, h);
+                        y += h + self.gap;
+                        r
+                    })
+                    .collect()
             }
             Direction::Row => {
-                let fixed_width: f32 = self.children.iter().map(|c| match c.width {
-                    UiSize::Fixed(v) => v,
-                    UiSize::Fill => 0.0,
-                }).sum();
-                let fill_count = self.children.iter().filter(|c| c.width == UiSize::Fill).count() as f32;
+                let fixed_width: f32 = self
+                    .children
+                    .iter()
+                    .map(|c| match c.width {
+                        UiSize::Fixed(v) => v,
+                        UiSize::Fill => 0.0,
+                    })
+                    .sum();
+                let fill_count = self
+                    .children
+                    .iter()
+                    .filter(|c| c.width == UiSize::Fill)
+                    .count() as f32;
                 let fill_width = if fill_count > 0.0 {
                     ((inner.width - fixed_width - total_gap) / fill_count).max(0.0)
-                } else { 0.0 };
+                } else {
+                    0.0
+                };
 
                 let mut x = inner.x;
-                self.children.iter().map(|c| {
-                    let w = match c.width {
-                        UiSize::Fixed(v) => v,
-                        UiSize::Fill => fill_width,
-                    };
-                    let r = Rect::new(x, inner.y, w, inner.height);
-                    x += w + self.gap;
-                    r
-                }).collect()
+                self.children
+                    .iter()
+                    .map(|c| {
+                        let w = match c.width {
+                            UiSize::Fixed(v) => v,
+                            UiSize::Fill => fill_width,
+                        };
+                        let r = Rect::new(x, inner.y, w, inner.height);
+                        x += w + self.gap;
+                        r
+                    })
+                    .collect()
             }
         }
     }

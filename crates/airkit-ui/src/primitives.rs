@@ -11,11 +11,21 @@ pub struct Rect {
 
 impl Rect {
     pub fn new(x: f32, y: f32, width: f32, height: f32) -> Self {
-        Self { x, y, width, height }
+        Self {
+            x,
+            y,
+            width,
+            height,
+        }
     }
 
     pub fn from_size(width: f32, height: f32) -> Self {
-        Self { x: 0.0, y: 0.0, width, height }
+        Self {
+            x: 0.0,
+            y: 0.0,
+            width,
+            height,
+        }
     }
 
     pub fn right(&self) -> f32 {
@@ -53,11 +63,21 @@ pub struct Padding {
 
 impl Padding {
     pub const fn all(v: f32) -> Self {
-        Self { top: v, right: v, bottom: v, left: v }
+        Self {
+            top: v,
+            right: v,
+            bottom: v,
+            left: v,
+        }
     }
 
     pub const fn symmetric(vertical: f32, horizontal: f32) -> Self {
-        Self { top: vertical, right: horizontal, bottom: vertical, left: horizontal }
+        Self {
+            top: vertical,
+            right: horizontal,
+            bottom: vertical,
+            left: horizontal,
+        }
     }
 }
 

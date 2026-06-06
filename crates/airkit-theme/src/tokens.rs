@@ -28,24 +28,24 @@ pub struct ThemeTokens {
     pub radius_lg: f32, // 12
 
     // --- Font sizes ---
-    pub font_size_sm: f32,  // 12
-    pub font_size_md: f32,  // 14
-    pub font_size_lg: f32,  // 16
-    pub font_size_xl: f32,  // 20
+    pub font_size_sm: f32, // 12
+    pub font_size_md: f32, // 14
+    pub font_size_lg: f32, // 16
+    pub font_size_xl: f32, // 20
 }
 
 impl ThemeTokens {
     /// Light theme preset.
     pub fn light() -> Self {
         Self {
-            background:     Color::from_hex(0xF5F5F7),
-            surface:        Color::from_hex(0xFFFFFF),
-            primary:        Color::from_hex(0x0066CC),
-            on_primary:     Color::from_hex(0xFFFFFF),
-            text:           Color::from_hex(0x1D1D1F),
+            background: Color::from_hex(0xF5F5F7),
+            surface: Color::from_hex(0xFFFFFF),
+            primary: Color::from_hex(0x0066CC),
+            on_primary: Color::from_hex(0xFFFFFF),
+            text: Color::from_hex(0x1D1D1F),
             text_secondary: Color::from_hex(0x6E6E73),
-            border:         Color::from_hex(0xD2D2D7),
-            chrome:         Color::from_hex(0xE8E8ED),
+            border: Color::from_hex(0xD2D2D7),
+            chrome: Color::from_hex(0xE8E8ED),
             spacing_xs: 4.0,
             spacing_sm: 8.0,
             spacing_md: 16.0,
@@ -64,14 +64,14 @@ impl ThemeTokens {
     /// Dark theme preset.
     pub fn dark() -> Self {
         Self {
-            background:     Color::from_hex(0x1C1C1E),
-            surface:        Color::from_hex(0x2C2C2E),
-            primary:        Color::from_hex(0x0A84FF),
-            on_primary:     Color::from_hex(0xFFFFFF),
-            text:           Color::from_hex(0xF5F5F7),
+            background: Color::from_hex(0x1C1C1E),
+            surface: Color::from_hex(0x2C2C2E),
+            primary: Color::from_hex(0x0A84FF),
+            on_primary: Color::from_hex(0xFFFFFF),
+            text: Color::from_hex(0xF5F5F7),
             text_secondary: Color::from_hex(0x8E8E93),
-            border:         Color::from_hex(0x3A3A3C),
-            chrome:         Color::from_hex(0x242426),
+            border: Color::from_hex(0x3A3A3C),
+            chrome: Color::from_hex(0x242426),
             spacing_xs: 4.0,
             spacing_sm: 8.0,
             spacing_md: 16.0,
@@ -136,9 +136,11 @@ mod tests {
     fn light_and_dark_primary_colors_differ() {
         let light = ThemeTokens::light();
         let dark = ThemeTokens::dark();
-        assert!((light.primary.r - dark.primary.r).abs() > 0.01
-            || (light.primary.g - dark.primary.g).abs() > 0.01
-            || (light.primary.b - dark.primary.b).abs() > 0.01);
+        assert!(
+            (light.primary.r - dark.primary.r).abs() > 0.01
+                || (light.primary.g - dark.primary.g).abs() > 0.01
+                || (light.primary.b - dark.primary.b).abs() > 0.01
+        );
     }
 
     #[test]

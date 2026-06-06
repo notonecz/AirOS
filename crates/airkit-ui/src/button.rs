@@ -18,7 +18,10 @@ pub struct Button {
 
 impl Button {
     pub fn new(label: impl Into<String>) -> Self {
-        Self { label: label.into(), state: ButtonState::Normal }
+        Self {
+            label: label.into(),
+            state: ButtonState::Normal,
+        }
     }
 
     pub fn on_hover(&mut self) {
@@ -56,9 +59,9 @@ impl Button {
     /// Background color based on current state and theme.
     pub fn background_color(&self, tokens: &ThemeTokens) -> Color {
         match self.state {
-            ButtonState::Normal   => tokens.primary,
-            ButtonState::Hovered  => tokens.primary.lerp(Color::rgb(1.0, 1.0, 1.0), 0.15),
-            ButtonState::Pressed  => tokens.primary.lerp(Color::rgb(0.0, 0.0, 0.0), 0.15),
+            ButtonState::Normal => tokens.primary,
+            ButtonState::Hovered => tokens.primary.lerp(Color::rgb(1.0, 1.0, 1.0), 0.15),
+            ButtonState::Pressed => tokens.primary.lerp(Color::rgb(0.0, 0.0, 0.0), 0.15),
             ButtonState::Disabled => tokens.border,
         }
     }
@@ -138,8 +141,8 @@ mod tests {
         let hover_bg = b.background_color(&tokens);
         assert!(
             (normal_bg.r - hover_bg.r).abs() > 0.001
-            || (normal_bg.g - hover_bg.g).abs() > 0.001
-            || (normal_bg.b - hover_bg.b).abs() > 0.001
+                || (normal_bg.g - hover_bg.g).abs() > 0.001
+                || (normal_bg.b - hover_bg.b).abs() > 0.001
         );
     }
 

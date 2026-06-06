@@ -35,23 +35,35 @@ mod tests {
 
     #[test]
     fn new_window_has_zeroed_buffer() {
-        let state = WindowState::new(Size { width: 2, height: 2 });
+        let state = WindowState::new(Size {
+            width: 2,
+            height: 2,
+        });
         assert_eq!(state.buffer.len(), 16); // 2*2*4
         assert!(state.buffer.iter().all(|&b| b == 0));
     }
 
     #[test]
     fn resize_clears_buffer() {
-        let mut state = WindowState::new(Size { width: 2, height: 2 });
+        let mut state = WindowState::new(Size {
+            width: 2,
+            height: 2,
+        });
         state.commit_buffer(vec![1u8; 16]);
-        state.resize(Size { width: 4, height: 4 });
+        state.resize(Size {
+            width: 4,
+            height: 4,
+        });
         assert_eq!(state.buffer.len(), 64); // 4*4*4
         assert!(state.buffer.iter().all(|&b| b == 0));
     }
 
     #[test]
     fn commit_buffer_updates_pixels() {
-        let mut state = WindowState::new(Size { width: 1, height: 1 });
+        let mut state = WindowState::new(Size {
+            width: 1,
+            height: 1,
+        });
         let pixels = vec![255u8, 0, 128, 255];
         state.commit_buffer(pixels.clone());
         assert_eq!(state.buffer, pixels);
@@ -59,7 +71,10 @@ mod tests {
 
     #[test]
     fn commit_buffer_wrong_size_is_ignored() {
-        let mut state = WindowState::new(Size { width: 1, height: 1 });
+        let mut state = WindowState::new(Size {
+            width: 1,
+            height: 1,
+        });
         let original = state.buffer.clone();
         state.commit_buffer(vec![1u8; 999]);
         assert_eq!(state.buffer, original);

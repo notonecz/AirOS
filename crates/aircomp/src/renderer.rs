@@ -1,5 +1,5 @@
-use std::sync::{Arc, Mutex};
 use crate::scene::WindowScene;
+use std::sync::{Arc, Mutex};
 
 pub struct AirCompRenderer {
     device: wgpu::Device,
@@ -139,7 +139,10 @@ mod tests {
         let mut scene = WindowScene::new();
         scene.add_window(
             airproto::types::WindowId(1),
-            airproto::types::Size { width: 200, height: 150 },
+            airproto::types::Size {
+                width: 200,
+                height: 150,
+            },
         );
         renderer.unwrap().render_frame(&scene);
     }
