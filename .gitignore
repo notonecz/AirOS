@@ -1,0 +1,11 @@
+# Rust build artifacts
+/target/
+
+# AirOS disk image artefakty (generované build.sh)
+/airos.img
+/airos-rootfs.tar
+/vmlinuz-lts
+/initramfs-lts
+
+# Docker build context binary (zkopírovaná cross buildem)
+/scripts/aircomp
