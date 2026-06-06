@@ -1,0 +1,7 @@
+[package]
+name = "airwm"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+airproto = { path = "../airproto" }
