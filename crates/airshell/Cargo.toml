@@ -1,0 +1,7 @@
+[package]
+name = "airshell"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+airbus = { path = "../airbus" }

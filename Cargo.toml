@@ -6,6 +6,7 @@ members = [
     "crates/aircomp",
     "crates/airkit-theme",
     "crates/airkit-ui",
+    "crates/airshell",
 ]
 
 [workspace.package]
