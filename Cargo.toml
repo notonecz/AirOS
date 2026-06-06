@@ -9,6 +9,7 @@ members = [
     "crates/airshell",
     "crates/airwm",
     "apps/airfiles",
+    "apps/airterm",
 ]
 
 [workspace.package]
