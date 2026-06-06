@@ -4,3 +4,4 @@ pub mod messages;
 pub mod connection;
 
 pub use types::{WindowId, Size, Point};
+pub use messages::{ClientMessage, ServerMessage};
