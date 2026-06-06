@@ -1,0 +1,1 @@
+// Connection stub for AirBus
