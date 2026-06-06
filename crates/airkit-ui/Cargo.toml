@@ -1,0 +1,7 @@
+[package]
+name = "airkit-ui"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+airkit-theme = { path = "../airkit-theme" }

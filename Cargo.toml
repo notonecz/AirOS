@@ -4,6 +4,8 @@ members = [
     "crates/airproto",
     "crates/airbus",
     "crates/aircomp",
+    "crates/airkit-theme",
+    "crates/airkit-ui",
 ]
 
 [workspace.package]

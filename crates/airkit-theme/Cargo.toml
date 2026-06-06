@@ -1,0 +1,4 @@
+[package]
+name = "airkit-theme"
+version.workspace = true
+edition.workspace = true
