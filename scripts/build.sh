@@ -4,6 +4,10 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 
+# Ověřit dostupnost nástrojů
+command -v cross >/dev/null 2>&1 || { echo "ERROR: 'cross' není nainstalován. Spusť: cargo install cross --git https://github.com/cross-rs/cross --rev 29d00c78"; exit 1; }
+command -v docker >/dev/null 2>&1 || { echo "ERROR: Docker není spuštěn nebo nainstalován."; exit 1; }
+
 echo "==> [1/5] Cross-compile aircomp (x86_64-unknown-linux-musl, release)..."
 cd "$ROOT_DIR"
 cross build --release -p aircomp --target x86_64-unknown-linux-musl
@@ -16,9 +20,11 @@ docker build -f scripts/Dockerfile.rootfs -t airos-rootfs scripts/
 rm -f scripts/aircomp
 
 echo "==> [4/5] Export rootfs tarball..."
+trap 'docker rm -f airos-tmp 2>/dev/null || true' EXIT
 docker create --name airos-tmp airos-rootfs
 docker export airos-tmp > "$ROOT_DIR/airos-rootfs.tar"
 docker rm airos-tmp
+trap - EXIT
 
 echo "==> [5/5] Vytvoření ext4 disk image (512 MB) uvnitř Docker..."
 # --privileged dává přístup k loop devices uvnitř Docker Linux VM
@@ -31,7 +37,7 @@ docker run --privileged --rm \
         mkfs.ext4 -q /output/airos.img
         mkdir -p /mnt
         mount -o loop /output/airos.img /mnt
-        tar -xf /rootfs.tar -C /mnt 2>/dev/null || true
+        tar -xf /rootfs.tar -C /mnt || true
         cp /mnt/boot/vmlinuz-lts /output/vmlinuz-lts
         cp /mnt/boot/initramfs-lts /output/initramfs-lts
         umount /mnt

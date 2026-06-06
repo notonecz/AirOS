@@ -20,4 +20,4 @@ qemu-system-x86_64 \
     -m 1G \
     -smp 2 \
     -vga std \
-    -display cocoa
+    -display cocoa  # macOS — zmeň na -display gtk pro Linux

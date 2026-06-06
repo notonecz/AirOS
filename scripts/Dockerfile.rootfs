@@ -20,7 +20,7 @@ RUN apk add --no-cache \
 # Auto-start X na tty1: nahradit getty přímým spuštěním startx
 # Alpine default inittab má: tty1::respawn:/sbin/getty 38400 tty1
 RUN sed -i \
-    's|tty1::respawn:/sbin/getty 38400 tty1|tty1::respawn:/bin/sh -c "startx /root/.xinitrc -- :0 -nolisten tcp 2>/dev/null"|' \
+    's|tty1::respawn:/sbin/getty 38400 tty1|tty1::respawn:/bin/sh -c "startx /root/.xinitrc -- :0 -nolisten tcp 2>/tmp/startx.log; sleep 2"|' \
     /etc/inittab
 
 # .xinitrc: zakázat screensaver, spustit aircomp
