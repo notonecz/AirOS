@@ -134,6 +134,7 @@ impl SurfaceRenderer {
 }
 
 struct App {
+    #[allow(dead_code)]
     scene: Arc<Mutex<WindowScene>>,
     window: Option<Arc<Window>>,
     renderer: Option<SurfaceRenderer>,
