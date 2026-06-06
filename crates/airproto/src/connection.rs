@@ -80,7 +80,6 @@ mod tests {
         let dir = TempDir::new().unwrap();
         let socket_path = dir.path().join("test2.sock");
         let listener = UnixListener::bind(&socket_path).unwrap();
-        let path = socket_path.clone();
         let server_task = tokio::spawn(async move {
             let (stream, _) = listener.accept().await.unwrap();
             let mut conn = AirProtoConn::from_stream(stream);
