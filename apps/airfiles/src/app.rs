@@ -12,6 +12,7 @@ pub enum ActivePanel {
 }
 
 /// Kompletní stav AirFiles: dva panely, sidebar, aktivní panel.
+#[derive(Debug)]
 pub struct AirFilesApp {
     pub left: PanelState,
     pub right: PanelState,

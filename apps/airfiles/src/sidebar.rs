@@ -54,13 +54,20 @@ impl SidebarState {
 
     /// Odstraní první Favorites položku se shodnou cestou.
     /// Pokud byla odstraněna aktivní položka, výběr se vymaže.
+    /// Pokud byla odstraněna položka s nižším indexem než aktivní, aktivní index se sníží o 1.
     pub fn remove_favorite(&mut self, path: &Path) {
-        let before = self.items.len();
+        let removed_idx = self.items.iter().position(|i| {
+            i.section == SidebarSection::Favorites && i.path.as_deref() == Some(path)
+        });
         self.items.retain(|i| {
             !(i.section == SidebarSection::Favorites && i.path.as_deref() == Some(path))
         });
-        if self.items.len() < before {
-            self.active = None;
+        if let Some(removed) = removed_idx {
+            match self.active {
+                Some(active) if active == removed => self.active = None,
+                Some(active) if active > removed => self.active = Some(active - 1),
+                _ => {}
+            }
         }
     }
 
@@ -205,5 +212,16 @@ mod tests {
         s.add_favorite(PathBuf::from("/Users/vo"), "Home".into());
         s.remove_favorite(Path::new("/nonexistent"));
         assert_eq!(s.len(), 1);
+    }
+
+    #[test]
+    fn remove_other_favorite_does_not_clear_active_on_different_item() {
+        let mut s = SidebarState::new();
+        s.add_favorite(PathBuf::from("/Users/vo"), "Home".into());
+        s.add_favorite(PathBuf::from("/Users/vo/Downloads"), "Downloads".into());
+        s.set_active(1); // Downloads is active
+        s.remove_favorite(Path::new("/Users/vo")); // remove Home, not the active item
+        // Active should still be valid (now index 0 = Downloads)
+        assert!(s.active_index().is_some());
     }
 }

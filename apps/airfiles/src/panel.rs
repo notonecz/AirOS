@@ -10,6 +10,7 @@ pub enum SortOrder {
     SizeDesc,
 }
 
+#[derive(Debug)]
 pub struct PanelState {
     pub path: BreadcrumbPath,
     entries: Vec<FsEntry>,
