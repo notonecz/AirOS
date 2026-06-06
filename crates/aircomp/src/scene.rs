@@ -1,10 +1,16 @@
-use std::collections::HashMap;
-use airproto::types::{WindowId, Size};
 use crate::window::WindowState;
+use airproto::types::{Size, WindowId};
+use std::collections::HashMap;
 
 pub struct WindowScene {
     windows: HashMap<WindowId, WindowState>,
     z_order: Vec<WindowId>,
+}
+
+impl Default for WindowScene {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl WindowScene {
@@ -66,7 +72,10 @@ mod tests {
     use super::*;
 
     fn size(w: u32, h: u32) -> Size {
-        Size { width: w, height: h }
+        Size {
+            width: w,
+            height: h,
+        }
     }
 
     #[test]
