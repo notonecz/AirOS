@@ -23,7 +23,9 @@ impl WindowScene {
 
     pub fn add_window(&mut self, id: WindowId, size: Size) {
         self.windows.insert(id, WindowState::new(size));
-        self.z_order.push(id);
+        if !self.z_order.contains(&id) {
+            self.z_order.push(id);
+        }
     }
 
     pub fn remove_window(&mut self, id: WindowId) {
