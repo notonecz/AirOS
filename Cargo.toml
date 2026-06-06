@@ -8,6 +8,7 @@ members = [
     "crates/airkit-ui",
     "crates/airshell",
     "crates/airwm",
+    "apps/airfiles",
 ]
 
 [workspace.package]

@@ -1,0 +1,7 @@
+[package]
+name = "airfiles"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+airbus = { path = "../../crates/airbus" }
