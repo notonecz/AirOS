@@ -1,0 +1,32 @@
+FROM alpine:3.21
+
+# Kernel pro QEMU direct kernel boot
+# X11 stack
+# winit runtime dynamické knihovny (x11 feature loaduje přes dlopen)
+# Vulkan software rendering (lavapipe = CPU Vulkan, žádný GPU nepotřeba)
+RUN apk add --no-cache \
+    linux-lts \
+    xorg-server \
+    xf86-video-fbdev \
+    xinit \
+    libx11 \
+    libxext \
+    libxcursor \
+    libxi \
+    libxrandr \
+    mesa-vulkan-swrast \
+    vulkan-loader
+
+# Auto-start X na tty1: nahradit getty přímým spuštěním startx
+# Alpine default inittab má: tty1::respawn:/sbin/getty 38400 tty1
+RUN sed -i \
+    's|tty1::respawn:/sbin/getty 38400 tty1|tty1::respawn:/bin/sh -c "startx /root/.xinitrc -- :0 -nolisten tcp 2>/dev/null"|' \
+    /etc/inittab
+
+# .xinitrc: zakázat screensaver, spustit aircomp
+RUN printf '#!/bin/sh\nxset s off\nxset -dpms\nexec /usr/local/bin/aircomp\n' > /root/.xinitrc \
+    && chmod +x /root/.xinitrc
+
+# aircomp binárka (musl, staticky linkovaná)
+COPY aircomp /usr/local/bin/aircomp
+RUN chmod +x /usr/local/bin/aircomp
