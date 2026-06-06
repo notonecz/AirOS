@@ -8,6 +8,7 @@ pub mod window;
 
 use std::sync::{Arc, Mutex};
 
+pub use rect_pipeline::ColoredRect;
 pub use scene::WindowScene;
 pub use window::WindowState;
 
