@@ -1,0 +1,20 @@
+[package]
+name = "aircomp"
+version.workspace = true
+edition.workspace = true
+
+[[bin]]
+name = "aircomp"
+path = "src/main.rs"
+
+[lib]
+name = "aircomp"
+path = "src/lib.rs"
+
+[dependencies]
+airproto = { path = "../airproto" }
+tokio = { workspace = true }
+wgpu = { workspace = true }
+
+[dev-dependencies]
+tempfile = { workspace = true }
