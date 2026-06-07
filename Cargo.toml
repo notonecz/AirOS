@@ -12,6 +12,7 @@ members = [
     "apps/airterm",
     "apps/airsettings",
     "apps/airsetup",
+    "apps/airdemo",
 ]
 
 [workspace.package]

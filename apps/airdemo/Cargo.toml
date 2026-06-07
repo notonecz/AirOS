@@ -1,0 +1,12 @@
+[package]
+name = "airdemo"
+version.workspace = true
+edition.workspace = true
+
+[[bin]]
+name = "airdemo"
+path = "src/main.rs"
+
+[dependencies]
+airproto = { path = "../../crates/airproto" }
+tokio = { workspace = true }
