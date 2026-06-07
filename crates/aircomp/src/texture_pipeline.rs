@@ -1,6 +1,7 @@
 // crates/aircomp/src/texture_pipeline.rs
 
 /// Pixel-space souřadnice a RGBA data jednoho app okna pro render.
+#[derive(Debug)]
 pub struct WindowDraw<'a> {
     pub x: f32,
     pub y: f32,
@@ -64,9 +65,9 @@ pub struct TexturePipeline {
     pipeline: wgpu::RenderPipeline,
     screen_buf: wgpu::Buffer,
     rect_buf: wgpu::Buffer,
-    globals_bgl: wgpu::BindGroupLayout,
     globals_bg: wgpu::BindGroup,
     texture_bgl: wgpu::BindGroupLayout,
+    texture_format: wgpu::TextureFormat,
 }
 
 impl TexturePipeline {
@@ -189,9 +190,9 @@ impl TexturePipeline {
             pipeline,
             screen_buf,
             rect_buf,
-            globals_bgl,
             globals_bg,
             texture_bgl,
+            texture_format: format,
         }
     }
 
@@ -212,6 +213,12 @@ impl TexturePipeline {
         queue: &wgpu::Queue,
         win: &WindowDraw<'_>,
     ) {
+        assert_eq!(
+            win.pixels.len(),
+            win.w as usize * win.h as usize * 4,
+            "pixels length does not match w*h*4"
+        );
+
         // Upload rect uniform
         let rect_data: [f32; 4] = [win.x, win.y, win.w, win.h];
         let rect_bytes: Vec<u8> = rect_data.iter().flat_map(|f| f.to_ne_bytes()).collect();
@@ -228,7 +235,7 @@ impl TexturePipeline {
             mip_level_count: 1,
             sample_count: 1,
             dimension: wgpu::TextureDimension::D2,
-            format: wgpu::TextureFormat::Rgba8UnormSrgb,
+            format: self.texture_format,
             usage: wgpu::TextureUsages::TEXTURE_BINDING | wgpu::TextureUsages::COPY_DST,
             view_formats: &[],
         });
