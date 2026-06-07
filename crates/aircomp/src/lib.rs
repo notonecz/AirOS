@@ -4,6 +4,7 @@ pub mod renderer;
 pub mod scene;
 pub mod shell_chrome;
 pub mod surface;
+pub mod texture_pipeline;
 pub mod window;
 
 use std::sync::{Arc, Mutex};
