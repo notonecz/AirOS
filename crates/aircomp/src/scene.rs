@@ -41,10 +41,12 @@ impl WindowScene {
         self.windows.get_mut(&id)
     }
 
+    /// Vrátí okna v z-pořadí: první = nejníže, poslední = nahoře (focused).
     pub fn z_order(&self) -> &[WindowId] {
         &self.z_order
     }
 
+    /// Přesune okno na vrchol z-stacku (focused).
     pub fn raise_to_front(&mut self, id: WindowId) {
         self.z_order.retain(|&w| w != id);
         self.z_order.push(id);
