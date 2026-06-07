@@ -3,6 +3,7 @@
 use crate::rect_pipeline::RectPipeline;
 use crate::scene::WindowScene;
 use crate::shell_chrome;
+use crate::texture_pipeline::{TexturePipeline, WindowDraw};
 use std::sync::{Arc, Mutex};
 use winit::application::ApplicationHandler;
 use winit::event::WindowEvent;
@@ -15,11 +16,10 @@ pub struct SurfaceRenderer {
     surface: wgpu::Surface<'static>,
     config: wgpu::SurfaceConfiguration,
     pipeline: RectPipeline,
+    texture_pipeline: TexturePipeline,
 }
 
 impl SurfaceRenderer {
-    /// Inicializuje wgpu Surface na daném okně.
-    /// Vrátí None pokud není dostupný GPU adapter (CI bez GPU).
     pub async fn new(window: Arc<Window>) -> Option<Self> {
         let size = window.inner_size();
         let instance = wgpu::Instance::default();
@@ -69,16 +69,19 @@ impl SurfaceRenderer {
         let pipeline = RectPipeline::new(&device, format);
         pipeline.update_screen_size(&queue, size.width as f32, size.height as f32);
 
+        let texture_pipeline = TexturePipeline::new(&device, format);
+        texture_pipeline.update_screen_size(&queue, size.width as f32, size.height as f32);
+
         Some(Self {
             device,
             queue,
             surface,
             config,
             pipeline,
+            texture_pipeline,
         })
     }
 
-    /// Překonfiguruje Surface po změně velikosti okna.
     pub fn resize(&mut self, width: u32, height: u32) {
         if width == 0 || height == 0 {
             return;
@@ -88,10 +91,19 @@ impl SurfaceRenderer {
         self.surface.configure(&self.device, &self.config);
         self.pipeline
             .update_screen_size(&self.queue, width as f32, height as f32);
+        self.texture_pipeline
+            .update_screen_size(&self.queue, width as f32, height as f32);
     }
 
-    /// Vykreslí jeden frame: clear na #141414, pak recty.
-    pub fn render_frame(&self, rects: &[crate::rect_pipeline::ColoredRect]) {
+    /// Vykreslí jeden frame:
+    /// 1. clear na #141414
+    /// 2. app window textury (z WindowScene, v z-pořadí)
+    /// 3. shell chrome rects (topbar, dock)
+    pub fn render_frame(
+        &self,
+        rects: &[crate::rect_pipeline::ColoredRect],
+        scene: &WindowScene,
+    ) {
         let Ok(frame) = self.surface.get_current_texture() else {
             return;
         };
@@ -104,7 +116,7 @@ impl SurfaceRenderer {
                 label: Some("frame_encoder"),
             });
 
-        // Clear pass — desktop pozadí #141414
+        // 1. Clear pass — desktop pozadí #141414
         {
             let _clear = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
                 label: Some("clear_pass"),
@@ -127,14 +139,37 @@ impl SurfaceRenderer {
             });
         }
 
+        // 2. App window textury (back-to-front z-order)
+        for &id in scene.z_order() {
+            if let Some(win) = scene.get(id) {
+                if !win.buffer.is_empty() {
+                    let draw = WindowDraw {
+                        x: win.position.x,
+                        y: win.position.y,
+                        w: win.size.width as f32,
+                        h: win.size.height as f32,
+                        pixels: &win.buffer,
+                    };
+                    self.texture_pipeline.draw(
+                        &mut encoder,
+                        &view,
+                        &self.device,
+                        &self.queue,
+                        &draw,
+                    );
+                }
+            }
+        }
+
+        // 3. Shell chrome (topbar, dock) — vždy nahoře
         self.pipeline.draw(&mut encoder, &view, &self.queue, rects);
+
         self.queue.submit([encoder.finish()]);
         frame.present();
     }
 }
 
 struct App {
-    #[allow(dead_code)]
     scene: Arc<Mutex<WindowScene>>,
     window: Option<Arc<Window>>,
     renderer: Option<SurfaceRenderer>,
@@ -181,7 +216,9 @@ impl ApplicationHandler for App {
                 if let (Some(renderer), Some(window)) = (&self.renderer, &self.window) {
                     let size = window.inner_size();
                     let rects = shell_chrome::compute_chrome(size.width, size.height);
-                    renderer.render_frame(&rects);
+                    let scene = self.scene.lock().unwrap();
+                    renderer.render_frame(&rects, &scene);
+                    drop(scene);
                     window.request_redraw();
                 }
             }
