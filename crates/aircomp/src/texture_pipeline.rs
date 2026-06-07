@@ -64,8 +64,7 @@ fn fs_main(@location(0) uv: vec2<f32>) -> @location(0) vec4<f32> {
 pub struct TexturePipeline {
     pipeline: wgpu::RenderPipeline,
     screen_buf: wgpu::Buffer,
-    rect_buf: wgpu::Buffer,
-    globals_bg: wgpu::BindGroup,
+    globals_bgl: wgpu::BindGroupLayout,
     texture_bgl: wgpu::BindGroupLayout,
     texture_format: wgpu::TextureFormat,
 }
@@ -80,13 +79,6 @@ impl TexturePipeline {
         let screen_buf = device.create_buffer(&wgpu::BufferDescriptor {
             label: Some("tex_screen_size"),
             size: 8, // 2 × f32
-            usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
-            mapped_at_creation: false,
-        });
-
-        let rect_buf = device.create_buffer(&wgpu::BufferDescriptor {
-            label: Some("tex_rect"),
-            size: 16, // 4 × f32
             usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
             mapped_at_creation: false,
         });
@@ -113,21 +105,6 @@ impl TexturePipeline {
                         min_binding_size: None,
                     },
                     count: None,
-                },
-            ],
-        });
-
-        let globals_bg = device.create_bind_group(&wgpu::BindGroupDescriptor {
-            label: Some("tex_globals_bg"),
-            layout: &globals_bgl,
-            entries: &[
-                wgpu::BindGroupEntry {
-                    binding: 0,
-                    resource: screen_buf.as_entire_binding(),
-                },
-                wgpu::BindGroupEntry {
-                    binding: 1,
-                    resource: rect_buf.as_entire_binding(),
                 },
             ],
         });
@@ -189,8 +166,7 @@ impl TexturePipeline {
         Self {
             pipeline,
             screen_buf,
-            rect_buf,
-            globals_bg,
+            globals_bgl,
             texture_bgl,
             texture_format: format,
         }
@@ -219,10 +195,33 @@ impl TexturePipeline {
             "pixels length does not match w*h*4"
         );
 
-        // Upload rect uniform
+        // Create a per-draw rect buffer so each window gets its own rect data.
+        // Using queue.write_buffer on a shared buffer would cause all windows to
+        // render with the last written rect (writes are only applied on submit).
         let rect_data: [f32; 4] = [win.x, win.y, win.w, win.h];
         let rect_bytes: Vec<u8> = rect_data.iter().flat_map(|f| f.to_ne_bytes()).collect();
-        queue.write_buffer(&self.rect_buf, 0, &rect_bytes);
+        let rect_buf = device.create_buffer(&wgpu::BufferDescriptor {
+            label: Some("tex_rect"),
+            size: 16,
+            usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
+            mapped_at_creation: false,
+        });
+        queue.write_buffer(&rect_buf, 0, &rect_bytes);
+
+        let globals_bg = device.create_bind_group(&wgpu::BindGroupDescriptor {
+            label: Some("tex_globals_bg"),
+            layout: &self.globals_bgl,
+            entries: &[
+                wgpu::BindGroupEntry {
+                    binding: 0,
+                    resource: self.screen_buf.as_entire_binding(),
+                },
+                wgpu::BindGroupEntry {
+                    binding: 1,
+                    resource: rect_buf.as_entire_binding(),
+                },
+            ],
+        });
 
         // Vytvořit texturu pro toto okno
         let texture = device.create_texture(&wgpu::TextureDescriptor {
@@ -302,7 +301,7 @@ impl TexturePipeline {
         });
 
         pass.set_pipeline(&self.pipeline);
-        pass.set_bind_group(0, &self.globals_bg, &[]);
+        pass.set_bind_group(0, &globals_bg, &[]);
         pass.set_bind_group(1, &texture_bg, &[]);
         pass.draw(0..6, 0..1);
     }
