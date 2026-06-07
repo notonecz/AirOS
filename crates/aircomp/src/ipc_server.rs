@@ -10,7 +10,9 @@ pub async fn handle_client(scene: Arc<Mutex<WindowScene>>, stream: UnixStream) {
     while let Ok(msg) = conn.recv::<ClientMessage>().await {
         let mut s = scene.lock().unwrap();
         match msg {
-            ClientMessage::WindowCreate { id, size } => s.add_window(id, size),
+            ClientMessage::WindowCreate { id, size } => {
+                s.add_window(id, size, airproto::types::Point { x: 0.0, y: 0.0 })
+            }
             ClientMessage::WindowDestroy { id } => s.remove_window(id),
             ClientMessage::WindowResize { id, size } => s.resize_window(id, size),
             ClientMessage::BufferCommit { id, data } => s.commit_buffer(id, data),
@@ -78,6 +80,7 @@ mod tests {
                     width: 100,
                     height: 100,
                 },
+                airproto::types::Point { x: 0.0, y: 0.0 },
             );
         }
         let dir = TempDir::new().unwrap();

@@ -1,5 +1,5 @@
 use crate::window::WindowState;
-use airproto::types::{Size, WindowId};
+use airproto::types::{Point, Size, WindowId};
 use std::collections::HashMap;
 
 pub struct WindowScene {
@@ -21,8 +21,8 @@ impl WindowScene {
         }
     }
 
-    pub fn add_window(&mut self, id: WindowId, size: Size) {
-        self.windows.insert(id, WindowState::new(size));
+    pub fn add_window(&mut self, id: WindowId, size: Size, position: Point) {
+        self.windows.insert(id, WindowState::new(size, position));
         if !self.z_order.contains(&id) {
             self.z_order.push(id);
         }
@@ -41,12 +41,10 @@ impl WindowScene {
         self.windows.get_mut(&id)
     }
 
-    /// Vrátí okna v z-pořadí: první = nejníže, poslední = nahoře (focused).
     pub fn z_order(&self) -> &[WindowId] {
         &self.z_order
     }
 
-    /// Přesune okno na vrchol z-stacku (focused).
     pub fn raise_to_front(&mut self, id: WindowId) {
         self.z_order.retain(|&w| w != id);
         self.z_order.push(id);
@@ -74,16 +72,17 @@ mod tests {
     use super::*;
 
     fn size(w: u32, h: u32) -> Size {
-        Size {
-            width: w,
-            height: h,
-        }
+        Size { width: w, height: h }
+    }
+
+    fn pos(x: f32, y: f32) -> Point {
+        Point { x, y }
     }
 
     #[test]
     fn add_and_get_window() {
         let mut scene = WindowScene::new();
-        scene.add_window(WindowId(1), size(800, 600));
+        scene.add_window(WindowId(1), size(800, 600), pos(0.0, 0.0));
         assert!(scene.get(WindowId(1)).is_some());
         assert_eq!(scene.window_count(), 1);
     }
@@ -91,7 +90,7 @@ mod tests {
     #[test]
     fn remove_window() {
         let mut scene = WindowScene::new();
-        scene.add_window(WindowId(1), size(800, 600));
+        scene.add_window(WindowId(1), size(800, 600), pos(0.0, 0.0));
         scene.remove_window(WindowId(1));
         assert!(scene.get(WindowId(1)).is_none());
         assert_eq!(scene.window_count(), 0);
@@ -107,17 +106,17 @@ mod tests {
     #[test]
     fn z_order_reflects_insertion() {
         let mut scene = WindowScene::new();
-        scene.add_window(WindowId(1), size(100, 100));
-        scene.add_window(WindowId(2), size(100, 100));
+        scene.add_window(WindowId(1), size(100, 100), pos(0.0, 0.0));
+        scene.add_window(WindowId(2), size(100, 100), pos(0.0, 0.0));
         assert_eq!(scene.z_order(), &[WindowId(1), WindowId(2)]);
     }
 
     #[test]
     fn raise_to_front_moves_window_to_top() {
         let mut scene = WindowScene::new();
-        scene.add_window(WindowId(1), size(100, 100));
-        scene.add_window(WindowId(2), size(100, 100));
-        scene.add_window(WindowId(3), size(100, 100));
+        scene.add_window(WindowId(1), size(100, 100), pos(0.0, 0.0));
+        scene.add_window(WindowId(2), size(100, 100), pos(0.0, 0.0));
+        scene.add_window(WindowId(3), size(100, 100), pos(0.0, 0.0));
         scene.raise_to_front(WindowId(1));
         let z = scene.z_order();
         assert_eq!(z[z.len() - 1], WindowId(1));
@@ -127,8 +126,8 @@ mod tests {
     #[test]
     fn remove_window_also_removes_from_z_order() {
         let mut scene = WindowScene::new();
-        scene.add_window(WindowId(1), size(100, 100));
-        scene.add_window(WindowId(2), size(100, 100));
+        scene.add_window(WindowId(1), size(100, 100), pos(0.0, 0.0));
+        scene.add_window(WindowId(2), size(100, 100), pos(0.0, 0.0));
         scene.remove_window(WindowId(1));
         assert_eq!(scene.z_order(), &[WindowId(2)]);
     }
@@ -136,7 +135,7 @@ mod tests {
     #[test]
     fn commit_buffer_updates_window_pixels() {
         let mut scene = WindowScene::new();
-        scene.add_window(WindowId(1), size(1, 1));
+        scene.add_window(WindowId(1), size(1, 1), pos(0.0, 0.0));
         let pixels = vec![255u8, 0, 0, 255];
         scene.commit_buffer(WindowId(1), pixels.clone());
         assert_eq!(scene.get(WindowId(1)).unwrap().buffer, pixels);
@@ -145,10 +144,19 @@ mod tests {
     #[test]
     fn resize_window_updates_size() {
         let mut scene = WindowScene::new();
-        scene.add_window(WindowId(1), size(100, 100));
+        scene.add_window(WindowId(1), size(100, 100), pos(0.0, 0.0));
         scene.resize_window(WindowId(1), size(200, 150));
         let w = scene.get(WindowId(1)).unwrap();
         assert_eq!(w.size.width, 200);
         assert_eq!(w.size.height, 150);
+    }
+
+    #[test]
+    fn window_position_is_stored() {
+        let mut scene = WindowScene::new();
+        scene.add_window(WindowId(1), size(640, 480), pos(100.0, 200.0));
+        let w = scene.get(WindowId(1)).unwrap();
+        assert!((w.position.x - 100.0).abs() < f32::EPSILON);
+        assert!((w.position.y - 200.0).abs() < f32::EPSILON);
     }
 }

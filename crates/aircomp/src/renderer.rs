@@ -143,6 +143,7 @@ mod tests {
                 width: 200,
                 height: 150,
             },
+            airproto::types::Point { x: 0.0, y: 0.0 },
         );
         renderer.unwrap().render_frame(&scene);
     }
